@@ -1,0 +1,1 @@
+Extract relevant DOM for an LLM to guide browsing automation.
