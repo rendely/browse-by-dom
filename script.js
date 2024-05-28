@@ -29,12 +29,15 @@ let arias = Array.from(elements).filter(element => {
             && element.ariaHidden !== 'true'
             && isElementInViewport(element)
             && element.checkVisibility()
+            && element.tabIndex !== '-1'
 
         )});
 
-let ariasresult = arias.map(a => ({ tag: a.nodeName, hidden: a.ariaHidden, name: a.name, type: a.type, title: a.title, label: a.ariaLabel, text: a.innerText, rect: a.getBoundingClientRect(), href: a.href }));
+arias.forEach((a,i) => a.setAttribute('bot-id',i))
 
-ariasresult
+let ariasresult = arias.map(a => ({ id: a.bot_id, tag: a.nodeName, tabindex: a.tabindex, fontSize: window.getComputedStyle(a, null).getPropertyValue('font-size'), name: a.name, type: a.type, title: a.title, label: a.ariaLabel, text: a.innerText, rect: a.getBoundingClientRect(), href: a.href }));
+
+
 
 console.table(ariasresult);
 
