@@ -16,31 +16,48 @@ function isElementInViewport(el) {
 }
 
 
+// start with a root node
+// we'll save to an empty array which over time we fill with objects of element and children
+
+
 function getActionableElements(el){
-    console.log(el);
-    if (!el.hasChildNodes() && el.nodeName === 'A') {
-        console.log('found an a no children')
-        return el
+    // if single node
+    if (!Array.isArray(el)){
+        // if terminating node
+        if (!el.hasChildNodes()){
+            if (el.nodeName !== 'A'){
+                console.log('undefined', el)
+                return undefined
+            } else{
+                console.log('terminating', el)
+                return {element: el}
+            }
+        }
+        //if has children
+        else{
+            const children = getActionableElements(Array.from(el.children))
+            //if keep this node
+            if (el.nodeName === 'A'){
+                console.log('children keep', el)
+                
+                return {element: el, ...children && {children: children}}
+            }
+            //skip this node
+            else{
+                console.log('children only', el);
+                return children ? children : undefined 
+            }            
+        }
     }
-    if (!el.hasChildNodes()) {
-        console.log('null')
-        return null
+    // else if list
+    else{
+        console.log('list', el)
+        const elements = el.map(getActionableElements)
+        const filtered = elements.filter(e => e !== undefined)
+        if (filtered.length === 0) return undefined 
+        return filtered
     }
-    const children = Array.from(el.children).map(c => 
-        getActionableElements(c)
-    )
-    const childrenFiltered = children.filter(c => !!c)
-    const childrenActionable = childrenFiltered.length > 0 ? childrenFiltered.map(getActionableElements) : null
-    if (el.hasChildNodes() && el.nodeName === 'A'){
-        console.log('a with children')
-        const new_el = el;
-        el.children = childrenActionable
-        return new_el
-    }
-    if (el.hasChildNodes() && el.nodeName !== 'A'){
-        console.log('just children')
-        return childrenActionable
-    }
+
 }
 
 getActionableElements(sub)
