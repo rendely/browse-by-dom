@@ -19,24 +19,28 @@ function isElementInViewport(el) {
 // start with a root node
 // we'll save to an empty array which over time we fill with objects of element and children
 
+function isValidElement(el){
+    if (['A'].includes(el.nodeName)) return true 
+    return false
+}
 
 function getActionableElements(el){
     // if single node
     if (!Array.isArray(el)){
         // if terminating node
         if (!el.hasChildNodes()){
-            if (el.nodeName !== 'A'){
+            if (isValidElement(el)){
                 return undefined
             } else{
-                return {element: el.href, text: el.innerText}
+                return {element: el.href, text: el.innerText, label:el.ariaLabel}
             }
         }
         //if has children
         else{
             const children = getActionableElements(Array.from(el.children))
             //if keep this node
-            if (el.nodeName === 'A'){
-                return {element: el.href, text:el.innerText, ...children && {children: children}}
+            if (isValidElement(el)){
+                return {element: el.href, text:el.innerText, label:el.ariaLabel, ...children && {children: children}}
             }
             //skip this node
             else{
@@ -55,7 +59,8 @@ function getActionableElements(el){
 
 }
 
-getActionableElements(sub)
+let result = getActionableElements(sub)
+JSON.stringify(result, null, 4)
 
 getActionableElements(document.body)
 
