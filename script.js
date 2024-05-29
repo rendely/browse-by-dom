@@ -26,11 +26,9 @@ function getActionableElements(el){
         // if terminating node
         if (!el.hasChildNodes()){
             if (el.nodeName !== 'A'){
-                console.log('undefined', el)
                 return undefined
             } else{
-                console.log('terminating', el)
-                return {element: el}
+                return {element: el.href, text: el.innerText}
             }
         }
         //if has children
@@ -38,29 +36,27 @@ function getActionableElements(el){
             const children = getActionableElements(Array.from(el.children))
             //if keep this node
             if (el.nodeName === 'A'){
-                console.log('children keep', el)
-                
-                return {element: el, ...children && {children: children}}
+                return {element: el.href, text:el.innerText, ...children && {children: children}}
             }
             //skip this node
             else{
-                console.log('children only', el);
                 return children ? children : undefined 
             }            
         }
     }
     // else if list
     else{
-        console.log('list', el)
         const elements = el.map(getActionableElements)
         const filtered = elements.filter(e => e !== undefined)
         if (filtered.length === 0) return undefined 
+        if (filtered.length === 1) return filtered[0]
         return filtered
     }
 
 }
 
 getActionableElements(sub)
+
 getActionableElements(document.body)
 
 
